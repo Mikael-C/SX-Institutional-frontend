@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { WalletContext } from '../../App.jsx';
 
 const pageTitles = {
@@ -57,9 +57,9 @@ function Header({ onMenuToggle }) {
         {connected ? (
           <div className="flex items-center gap-sm">
             {!sxAccount && location.pathname !== '/register' && (
-              <a href="/register" className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
+              <Link to="/register" className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
                 Create Account
-              </a>
+              </Link>
             )}
             <button className="btn btn-outline btn-sm" onClick={disconnectWallet}>
               {sxAccount ? (

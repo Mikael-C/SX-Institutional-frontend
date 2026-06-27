@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { WalletContext } from '../App.jsx';
 import Card from '../components/common/Card.jsx';
 import { useToast } from '../components/common/Toast.jsx';
@@ -156,7 +157,7 @@ function KYC() {
             <div>
               <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-primary)' }}>SXUA Account Required</h4>
               <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                You must create an Institutional SXUA Account before submitting KYC. <a href="/register" style={{ color: 'var(--accent-primary)', textDecoration: 'underline' }}>Create Account</a>
+                You must create an Institutional SXUA Account before submitting KYC. <Link to="/register" style={{ color: 'var(--accent-primary)', textDecoration: 'underline' }}>Create Account</Link>
               </p>
             </div>
           </div>
