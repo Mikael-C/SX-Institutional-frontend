@@ -22,7 +22,7 @@ const navItems = [
 ];
 
 function Sidebar({ isOpen, onClose }) {
-  const { walletAddress, connected } = useContext(WalletContext);
+  const { walletAddress, connected, sxAccount } = useContext(WalletContext);
 
   const shortenAddress = (addr) => {
     if (!addr) return '';
@@ -60,9 +60,20 @@ function Sidebar({ isOpen, onClose }) {
           <div className="sidebar-wallet">
             <div className={`wallet-dot ${connected ? 'connected' : 'disconnected'}`} />
             <div className="wallet-info">
-              <div className="wallet-label">Wallet</div>
-              <div className="wallet-address">
-                {connected ? shortenAddress(walletAddress) : 'Not connected'}
+              <div className="wallet-label">{sxAccount ? 'SXUA Account' : 'Wallet'}</div>
+              <div className="wallet-address" style={{ display: 'flex', flexDirection: 'column' }}>
+                {connected ? (
+                  sxAccount ? (
+                    <>
+                      <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{sxAccount.sxuaId}</span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{shortenAddress(walletAddress)}</span>
+                    </>
+                  ) : (
+                    shortenAddress(walletAddress)
+                  )
+                ) : (
+                  'Not connected'
+                )}
               </div>
             </div>
           </div>

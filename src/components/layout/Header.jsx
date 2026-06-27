@@ -17,10 +17,11 @@ const pageTitles = {
   '/lending': 'Lending',
   '/kyc': 'KYC Verification',
   '/admin': 'Admin Panel',
+  '/register': 'Create SXUA Account',
 };
 
 function Header({ onMenuToggle }) {
-  const { walletAddress, connected, connectWallet, disconnectWallet, getChainName, chainId } = useContext(WalletContext);
+  const { walletAddress, connected, sxAccount, connectWallet, disconnectWallet, getChainName, chainId } = useContext(WalletContext);
   const location = useLocation();
 
   const title = pageTitles[location.pathname] || 'SX Omni Chain';
@@ -55,8 +56,21 @@ function Header({ onMenuToggle }) {
 
         {connected ? (
           <div className="flex items-center gap-sm">
+            {!sxAccount && location.pathname !== '/register' && (
+              <a href="/register" className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
+                Create Account
+              </a>
+            )}
             <button className="btn btn-outline btn-sm" onClick={disconnectWallet}>
-              {shortenAddress(walletAddress)}
+              {sxAccount ? (
+                <span className="flex items-center gap-xs">
+                  <span style={{ color: 'var(--accent-primary)' }}>👤 {sxAccount.username}</span>
+                  <span className="text-muted" style={{ margin: '0 4px' }}>|</span>
+                  <span>{shortenAddress(walletAddress)}</span>
+                </span>
+              ) : (
+                shortenAddress(walletAddress)
+              )}
             </button>
           </div>
         ) : (

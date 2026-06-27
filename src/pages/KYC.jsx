@@ -5,7 +5,7 @@ import Card from '../components/common/Card.jsx';
 import { useToast } from '../components/common/Toast.jsx';
 
 function KYC() {
-  const { API_BASE, walletAddress } = useContext(WalletContext);
+  const { API_BASE, walletAddress, sxAccount } = useContext(WalletContext);
   const { addToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [kycStatus, setKycStatus] = useState('none');
@@ -149,6 +149,20 @@ function KYC() {
 
   return (
     <div className="animate-fadeIn">
+      {!sxAccount && (
+        <div className="mb-lg" style={{ padding: '16px', background: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--accent-warning)', borderLeft: '4px solid var(--accent-warning)' }}>
+          <div className="flex items-center gap-md">
+            <span style={{ fontSize: '1.5rem' }}>⚠️</span>
+            <div>
+              <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-primary)' }}>SXUA Account Required</h4>
+              <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                You must create an Institutional SXUA Account before submitting KYC. <a href="/register" style={{ color: 'var(--accent-primary)', textDecoration: 'underline' }}>Create Account</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="grid-2 mb-lg" style={{ gridTemplateColumns: '3fr 2fr' }}>
         <Card title="KYC Application">
           {kycStatus === 'verified' ? (
@@ -226,8 +240,8 @@ function KYC() {
                 </div>
               </div>
 
-              <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={submitting}>
-                {submitting ? 'Submitting...' : 'Submit KYC Application'}
+              <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={submitting || !sxAccount}>
+                {!sxAccount ? 'Create Account First' : (submitting ? 'Submitting...' : 'Submit KYC Application')}
               </button>
             </form>
           )}
@@ -278,6 +292,25 @@ function KYC() {
               </div>
             </div>
           </Card>
+
+          {sxAccount && (
+            <Card title="Account Info">
+              <div className="flex flex-col gap-sm" style={{ padding: '10px 0' }}>
+                <div className="flex justify-between" style={{ padding: '8px 0', borderBottom: '1px solid var(--border-color)' }}>
+                  <span className="text-secondary">SXUA ID</span>
+                  <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{sxAccount.sxuaId}</span>
+                </div>
+                <div className="flex justify-between" style={{ padding: '8px 0', borderBottom: '1px solid var(--border-color)' }}>
+                  <span className="text-secondary">Username</span>
+                  <span style={{ color: 'var(--text-primary)' }}>{sxAccount.username}</span>
+                </div>
+                <div className="flex justify-between" style={{ padding: '8px 0', borderBottom: '1px solid var(--border-color)' }}>
+                  <span className="text-secondary">Tier</span>
+                  <span className="badge badge-info">{sxAccount.accountTier}</span>
+                </div>
+              </div>
+            </Card>
+          )}
         </div>
       </div>
     </div>

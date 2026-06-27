@@ -17,6 +17,7 @@ import KYC from './pages/KYC.jsx';
 import EventsDatabase from './pages/EventsDatabase.jsx';
 import Admin from './pages/Admin.jsx';
 import Deployment from './pages/Deployment.jsx';
+import Register from './pages/Register.jsx';
 import { ToastProvider } from './components/common/Toast.jsx';
 
 export const WalletContext = createContext(null);
@@ -29,7 +30,23 @@ function App() {
   const [chainId, setChainId] = useState(null);
   const [connected, setConnected] = useState(false);
   const [wsMessages, setWsMessages] = useState([]);
+  const [sxAccount, setSxAccount] = useState(null);
   const wsRef = useRef(null);
+
+  const fetchSxAccount = async (address) => {
+    try {
+      const response = await fetch(`${API_BASE}/accounts/${address}`);
+      if (response.ok) {
+        const json = await response.json();
+        setSxAccount(json.data);
+      } else {
+        setSxAccount(null);
+      }
+    } catch (error) {
+      console.error('Failed to fetch SX account:', error);
+      setSxAccount(null);
+    }
+  };
 
   const connectWallet = useCallback(async () => {
     if (typeof window.ethereum === 'undefined') {
@@ -39,10 +56,12 @@ function App() {
     try {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       if (accounts.length > 0) {
-        setWalletAddress(accounts[0]);
+        const address = accounts[0];
+        setWalletAddress(address);
         setConnected(true);
         const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' });
         setChainId(parseInt(chainIdHex, 16));
+        await fetchSxAccount(address);
       }
     } catch (error) {
       console.error('Failed to connect wallet:', error);
@@ -53,6 +72,7 @@ function App() {
     setWalletAddress('');
     setChainId(null);
     setConnected(false);
+    setSxAccount(null);
   }, []);
 
   const switchNetwork = useCallback(async (targetChainId) => {
@@ -78,8 +98,10 @@ function App() {
     if (typeof window.ethereum !== 'undefined') {
       window.ethereum.on('accountsChanged', (accounts) => {
         if (accounts.length > 0) {
-          setWalletAddress(accounts[0]);
+          const address = accounts[0];
+          setWalletAddress(address);
           setConnected(true);
+          fetchSxAccount(address);
         } else {
           disconnectWallet();
         }
@@ -90,8 +112,10 @@ function App() {
 
       window.ethereum.request({ method: 'eth_accounts' }).then((accounts) => {
         if (accounts.length > 0) {
-          setWalletAddress(accounts[0]);
+          const address = accounts[0];
+          setWalletAddress(address);
           setConnected(true);
+          fetchSxAccount(address);
           window.ethereum.request({ method: 'eth_chainId' }).then((chainIdHex) => {
             setChainId(parseInt(chainIdHex, 16));
           });
@@ -139,6 +163,8 @@ function App() {
     walletAddress,
     chainId,
     connected,
+    sxAccount,
+    fetchSxAccount,
     connectWallet,
     disconnectWallet,
     switchNetwork,
@@ -168,6 +194,7 @@ function App() {
             <Route path="/database" element={<EventsDatabase />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/deployment" element={<Deployment />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </Layout>
       </ToastProvider>
