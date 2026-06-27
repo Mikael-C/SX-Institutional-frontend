@@ -21,7 +21,7 @@ const pageTitles = {
 };
 
 function Header({ onMenuToggle }) {
-  const { walletAddress, connected, sxAccount, connectWallet, disconnectWallet, getChainName, chainId } = useContext(WalletContext);
+  const { walletAddress, connected, sxAccount, isFetchingAccount, connectWallet, disconnectWallet, getChainName, chainId } = useContext(WalletContext);
   const location = useLocation();
 
   const title = pageTitles[location.pathname] || 'SX Omni Chain';
@@ -54,13 +54,14 @@ function Header({ onMenuToggle }) {
           </span>
         )}
 
-        {connected ? (
-          <div className="flex items-center gap-sm">
-            {!sxAccount && location.pathname !== '/register' && (
-              <Link to="/register" className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
-                Create Account
-              </Link>
-            )}
+        <div className="flex items-center gap-sm">
+          {!sxAccount && !isFetchingAccount && location.pathname !== '/register' && (
+            <Link to="/register" className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
+              Create Account
+            </Link>
+          )}
+
+          {connected ? (
             <button className="btn btn-outline btn-sm" onClick={disconnectWallet}>
               {sxAccount ? (
                 <span className="flex items-center gap-xs">
@@ -72,12 +73,12 @@ function Header({ onMenuToggle }) {
                 shortenAddress(walletAddress)
               )}
             </button>
-          </div>
-        ) : (
-          <button className="btn btn-primary btn-sm" onClick={connectWallet}>
-            Connect Wallet
-          </button>
-        )}
+          ) : (
+            <button className="btn btn-primary btn-sm" onClick={connectWallet}>
+              Connect Wallet
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );

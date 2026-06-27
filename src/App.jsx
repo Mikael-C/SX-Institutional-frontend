@@ -31,9 +31,11 @@ function App() {
   const [connected, setConnected] = useState(false);
   const [wsMessages, setWsMessages] = useState([]);
   const [sxAccount, setSxAccount] = useState(null);
+  const [isFetchingAccount, setIsFetchingAccount] = useState(false);
   const wsRef = useRef(null);
 
   const fetchSxAccount = async (address) => {
+    setIsFetchingAccount(true);
     try {
       const response = await fetch(`${API_BASE}/accounts/${address}`);
       if (response.ok) {
@@ -45,6 +47,8 @@ function App() {
     } catch (error) {
       console.error('Failed to fetch SX account:', error);
       setSxAccount(null);
+    } finally {
+      setIsFetchingAccount(false);
     }
   };
 
@@ -164,6 +168,7 @@ function App() {
     chainId,
     connected,
     sxAccount,
+    isFetchingAccount,
     fetchSxAccount,
     connectWallet,
     disconnectWallet,
